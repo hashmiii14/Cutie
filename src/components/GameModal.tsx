@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Game } from '@/data/games';
-import { X, Maximize2, RotateCcw, Loader2, Star, ThumbsUp } from 'lucide-react';
+import { X, Maximize2, RotateCcw, Loader2, Star, ExternalLink } from 'lucide-react';
 
 interface GameModalProps {
   game: Game | null;
@@ -15,8 +15,10 @@ export const GameModal: React.FC<GameModalProps> = ({ game, onClose }) => {
   const iframeContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setIsLoading(true);
-    setKey((prev) => prev + 1);
+    if (game) {
+      setIsLoading(true);
+      setKey((prev) => prev + 1);
+    }
   }, [game]);
 
   if (!game) return null;
@@ -34,8 +36,12 @@ export const GameModal: React.FC<GameModalProps> = ({ game, onClose }) => {
     }
   };
 
+  const handleOpenExternal = () => {
+    window.open(game.embedUrl, '_blank', 'noopener,noreferrer');
+  };
+
   return (
-    <div className="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 md:p-6 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-2 sm:p-4 md:p-6 animate-in fade-in duration-200">
       
       {/* Modal Container */}
       <div 
@@ -73,6 +79,15 @@ export const GameModal: React.FC<GameModalProps> = ({ game, onClose }) => {
           {/* Action Buttons */}
           <div className="flex items-center gap-2">
             
+            {/* Open Direct in New Window */}
+            <button
+              onClick={handleOpenExternal}
+              title="Open Game in Full Screen Tab"
+              className="p-2.5 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+            >
+              <ExternalLink className="w-4 h-4" />
+            </button>
+
             {/* Refresh */}
             <button
               onClick={handleRefresh}
@@ -113,14 +128,13 @@ export const GameModal: React.FC<GameModalProps> = ({ game, onClose }) => {
             </div>
           )}
 
-          {/* High-Performance Game iFrame */}
+          {/* High-Performance Game iFrame (Without restrictive sandbox blocking WebGL) */}
           <iframe
             key={key}
             src={game.embedUrl}
             title={game.title}
             className="w-full h-full border-none"
-            allow="autoplay; payment; microphone; camera; gyroscope; accelerometer; encrypted-media; fullscreen"
-            sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-presentation allow-same-origin allow-scripts"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen; pointer-lock"
             onLoad={() => setIsLoading(false)}
           />
         </div>
