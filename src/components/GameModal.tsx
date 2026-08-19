@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { Game } from '@/data/games';
-import { X, Maximize2, RotateCcw, Loader2, Star, ExternalLink } from 'lucide-react';
+import { X, Maximize2, RotateCcw, Loader2, Star, Play, ExternalLink } from 'lucide-react';
 
 interface GameModalProps {
   game: Game | null;
@@ -79,13 +79,14 @@ export const GameModal: React.FC<GameModalProps> = ({ game, onClose }) => {
           {/* Action Buttons */}
           <div className="flex items-center gap-2">
             
-            {/* Open Direct in New Window */}
+            {/* Open Direct in New Tab */}
             <button
               onClick={handleOpenExternal}
               title="Open Game in Full Screen Tab"
-              className="p-2.5 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white transition-colors"
+              className="px-3 py-2 rounded-xl bg-teal-500 text-slate-950 font-bold text-xs hover:bg-teal-400 transition-all flex items-center gap-1.5 shadow"
             >
-              <ExternalLink className="w-4 h-4" />
+              <Play className="w-3.5 h-3.5 fill-slate-950" />
+              <span>PLAY FULLSCREEN</span>
             </button>
 
             {/* Refresh */}
@@ -117,7 +118,7 @@ export const GameModal: React.FC<GameModalProps> = ({ game, onClose }) => {
           </div>
         </div>
 
-        {/* Game iFrame Player Body */}
+        {/* Game Player Body */}
         <div className="relative flex-1 bg-black w-full h-full overflow-hidden">
           
           {/* Loading Spinner */}
@@ -125,10 +126,16 @@ export const GameModal: React.FC<GameModalProps> = ({ game, onClose }) => {
             <div className="absolute inset-0 bg-slate-900 flex flex-col items-center justify-center gap-3 z-10">
               <Loader2 className="w-10 h-10 text-teal-400 animate-spin" />
               <p className="text-slate-300 text-sm font-medium">Loading {game.title}...</p>
+              <button
+                onClick={handleOpenExternal}
+                className="mt-2 text-xs bg-slate-800 text-teal-300 px-3 py-1.5 rounded-lg border border-teal-500/30 flex items-center gap-1 hover:bg-slate-700"
+              >
+                <ExternalLink className="w-3 h-3" /> If loading is slow, click here to play in full tab
+              </button>
             </div>
           )}
 
-          {/* High-Performance Game iFrame (Without restrictive sandbox blocking WebGL) */}
+          {/* High-Performance Game iFrame */}
           <iframe
             key={key}
             src={game.embedUrl}
